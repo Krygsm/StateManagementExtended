@@ -12,7 +12,6 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity
 {
