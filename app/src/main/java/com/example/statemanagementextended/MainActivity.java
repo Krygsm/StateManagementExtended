@@ -12,13 +12,12 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import androidx.lifecycle.ViewModelProvider;
+
 
 public class MainActivity extends AppCompatActivity
 {
-    private static final String KEY_COUNT = "count";
-    private static final String KEY_TEXT = "text";
-    private static final String KEY_CHECKBOX = "checkbox";
-    private static final String KEY_SWITCH = "switch";
+    private StateViewModel stateViewModel;
 
     private TextView numberDisplayTextView;
     private Button addButton;
@@ -27,16 +26,12 @@ public class MainActivity extends AppCompatActivity
     private TextView checkBoxMessage;
     private Switch switchTheme;
 
-    private int count = 0;
-    private String text;
-    private Boolean checked = false;
-    private Boolean switched = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        stateViewModel = new ViewModelProvider(this).get(StateViewModel.class);
 
         numberDisplayTextView = findViewById(R.id.numberDisplay);
         addButton = findViewById(R.id.addButton);
@@ -45,25 +40,18 @@ public class MainActivity extends AppCompatActivity
         checkBoxMessage = findViewById(R.id.checkBoxMessageTextView);
         switchTheme = findViewById(R.id.themeSwitch);
 
-        if(savedInstanceState != null)
-        {
-            count = savedInstanceState.getInt(KEY_COUNT);
-            text = savedInstanceState.getString(KEY_TEXT);
-            checked = savedInstanceState.getBoolean(KEY_CHECKBOX);
-            switched = savedInstanceState.getBoolean(KEY_SWITCH);
 
-            updateCountText();
-            updateEditText();
-            updateCheckbox();
-            updateSwitchTheme();
-        }
+        updateCountText();
+        updateEditText();
+        updateCheckbox();
+        updateSwitchTheme();
 
         addButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                count++;
+                stateViewModel.incrementCount();
                 updateCountText();
             }
         });
@@ -73,7 +61,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked)
             {
-                if(isChecked) checked = true; else checked = false;
+                if(isChecked) stateViewModel.setChecked(true); else stateViewModel.setChecked(false);
                 updateCheckbox();
             }
         });
@@ -83,23 +71,14 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isSwitched)
             {
-                if(isSwitched) switched = true; else switched = false;
+                if(isSwitched) stateViewModel.setSwitchedTheme(true); else stateViewModel.setSwitchedTheme(false);;
                 updateSwitchTheme();
             }
         });
     }
 
-    protected void onSaveInstanceState(Bundle outState)
-    {
-        super.onSaveInstanceState(outState);
-        outState.putInt(KEY_COUNT, count);
-        outState.putString(KEY_TEXT, text);
-        outState.putBoolean(KEY_CHECKBOX, checked);
-        outState.putBoolean(KEY_SWITCH, switched);
-    }
-
-    private void updateCountText() { numberDisplayTextView.setText("Licznik:" + count); }
-    private void updateEditText() { editText.setText(text); }
-    private void updateCheckbox() { if(checked) checkBoxMessage.setText("Opcja zaznaczona"); else checkBoxMessage.setText(""); }
-    private void updateSwitchTheme() { if(switched) AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);  else AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO); }
+    private void updateCountText() { numberDisplayTextView.setText("Licznik:" + stateViewModel.getCount()); }
+    private void updateEditText() { editText.setText(stateViewModel.getText()); }
+    private void updateCheckbox() { if(stateViewModel.getChecked()) checkBoxMessage.setText("Opcja zaznaczona"); else checkBoxMessage.setText(""); }
+    private void updateSwitchTheme() { if(stateViewModel.getSwitchedTheme()) AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);  else AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO); }
 }
