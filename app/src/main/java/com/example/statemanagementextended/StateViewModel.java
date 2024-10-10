@@ -15,6 +15,7 @@ public class StateViewModel extends ViewModel
     public Boolean getSwitchedTheme() { return switchedTheme; }
 
     public void setChecked(Boolean checked) { this.checked = checked; }
+    public void setText(String text) { this.text = text; }
     public void setSwitchedTheme(Boolean switchedTheme) { this.switchedTheme = switchedTheme; }
 
     public void incrementCount() { count++; }
